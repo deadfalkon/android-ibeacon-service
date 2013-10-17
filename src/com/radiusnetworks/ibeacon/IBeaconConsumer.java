@@ -58,7 +58,7 @@ import android.content.ServiceConnection;
  *        	 {@literal @}Override 
  *        	public void didRangeBeaconsInRegion(Collection<IBeacon> iBeacons, Region region) {
  *     			if (iBeacons.size() > 0) {
- *	      			Log.i(TAG, "The first iBeacon I see is about "+iBeacons.iterator().next().getAccuracy()+" meters away.");		
+ *	      			LOG.i(TAG, "The first iBeacon I see is about "+iBeacons.iterator().next().getAccuracy()+" meters away.");
  *     			}
  *        	}
  *  		});

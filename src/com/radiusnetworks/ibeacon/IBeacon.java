@@ -23,8 +23,6 @@
  */
 package com.radiusnetworks.ibeacon;
 
-import android.util.Log;
-
 /**
 * The <code>IBeacon</code> class represents a single hardware iBeacon detected by 
 * an Android device.
@@ -210,7 +208,6 @@ public class IBeacon {
 		}		
 		else {
 			// This is not an iBeacon
-			Log.d(TAG, "This is not an iBeacon advertisment.  The bytes I see are: "+bytesToHex(scanData));
 			return null;
 		}
 								

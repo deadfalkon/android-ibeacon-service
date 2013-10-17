@@ -29,7 +29,7 @@ import android.os.Message;
 import android.os.Messenger;
 import android.os.Parcelable;
 import android.os.RemoteException;
-import android.util.Log;
+import com.radiusnetworks.utils.LOG;
 
 /*
  * the messenger is used if the app is running
@@ -69,18 +69,18 @@ public class Callback {
 	public boolean call(Context context, String dataName, Parcelable data) {
 		if (messenger != null) {
 			try {
-				Log.d(TAG, "attempting callback via messenger");
+				LOG.d(TAG, "attempting callback via messenger");
 			   Message msg = Message.obtain();     			   
 			   msg.obj = data;			
 			   messenger.send(msg);
 			   return true;
 			}
 			catch (RemoteException e) {
-			   Log.e(TAG, "error calling messenger", e);
+			   LOG.e(TAG, "error calling messenger", e);
  		    }
 		}
 		if (intent != null) {
-			Log.d(TAG, "attempting callback via intent: "+intent.getAction());
+			LOG.d(TAG, "attempting callback via intent: "+intent.getAction());
 			intent.putExtra(dataName, data);
 			context.startService(intent);		
 			return true;			

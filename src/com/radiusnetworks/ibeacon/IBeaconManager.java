@@ -46,7 +46,7 @@ import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
-import android.util.Log;
+import com.radiusnetworks.utils.LOG;
 
 /**
  * An class used to set up interaction with iBeacons from an <code>Activity</code> or <code>Service</code>.
@@ -78,7 +78,7 @@ import android.util.Log;
  *        	 {@literal @}Override 
  *        	public void didRangeBeaconsInRegion(Collection<IBeacon> iBeacons, Region region) {
  *     			if (iBeacons.size() > 0) {
- *	      			Log.i(TAG, "The first iBeacon I see is about "+iBeacons.iterator().next().getAccuracy()+" meters away.");		
+ *	      			LOG.i(TAG, "The first iBeacon I see is about "+iBeacons.iterator().next().getAccuracy()+" meters away.");
  *     			}
  *        	}
  *  		});
@@ -108,7 +108,7 @@ public class IBeaconManager {
 	 */
 	public static IBeaconManager getInstanceForApplication(Context context) {
 		if (!isInstantiated()) {
-			Log.d(TAG, "IBeaconManager instance craetion");
+			LOG.d(TAG, "IBeaconManager instance craetion");
 			client = new IBeaconManager(context);
 		}
 		return client;
@@ -142,14 +142,14 @@ public class IBeaconManager {
 	 */
 	public void bind(IBeaconConsumer consumer) {
 		if (consumers.keySet().contains(consumer)) {
-			Log.i(TAG, "This consumer is already bound");					
+			LOG.i(TAG, "This consumer is already bound");
 		}
 		else {
-			Log.i(TAG, "This consumer is not bound.  binding: "+consumer);	
+			LOG.i(TAG, "This consumer is not bound.  binding: " + consumer);
 			consumers.put(consumer, false);
 			Intent intent = new Intent(consumer.getApplicationContext(), IBeaconService.class);
 			consumer.bindService(intent, iBeaconServiceConnection, Context.BIND_AUTO_CREATE);
-			Log.i(TAG, "consumer count is now:"+consumers.size());
+			LOG.i(TAG, "consumer count is now:" + consumers.size());
 		}
 	}
 	
@@ -161,15 +161,15 @@ public class IBeaconManager {
 	 */
 	public void unBind(IBeaconConsumer consumer) {
 		if (consumers.keySet().contains(consumer)) {
-			Log.i(TAG, "Unbinding");			
+			LOG.i(TAG, "Unbinding");
 			consumer.unbindService(iBeaconServiceConnection);
 			consumers.remove(consumer);
 		}
 		else {
-			Log.i(TAG, "This consumer is not bound to: "+consumer);
-			Log.i(TAG, "Bound consumers: ");
+			LOG.i(TAG, "This consumer is not bound to: " + consumer);
+			LOG.i(TAG, "Bound consumers: ");
 			for (int i = 0; i < consumers.size(); i++) {
-				Log.i(TAG, " "+consumers.get(i));
+				LOG.i(TAG, " " + consumers.get(i));
 			}
 		}
 	}
@@ -271,19 +271,19 @@ public class IBeaconManager {
 	
 	private String rangingCallbackAction() {
 		String action = context.getPackageName()+".DID_RANGING";
-		Log.d(TAG, "ranging callback action: "+action);
+		LOG.d(TAG, "ranging callback action: " + action);
 		return action;
 	}
 	private String monitoringCallbackAction() {
 		String action = context.getPackageName()+".DID_MONITORING";
-		Log.d(TAG, "monitoring callback action: "+action);
+		LOG.d(TAG, "monitoring callback action: " + action);
 		return action;
 	}
 	
 	private ServiceConnection iBeaconServiceConnection = new ServiceConnection() {
 		// Called when the connection with the service is established
 	    public void onServiceConnected(ComponentName className, IBinder service) {
-	    	Log.d(TAG,  "we have a connection to the service now");
+	    	LOG.d(TAG, "we have a connection to the service now");
 	        serviceMessenger = new Messenger(service);
 	        Iterator<IBeaconConsumer> consumerIterator = consumers.keySet().iterator();
 	        while (consumerIterator.hasNext()) {
@@ -298,7 +298,7 @@ public class IBeaconManager {
 
 	    // Called when the connection with the service disconnects unexpectedly
 	    public void onServiceDisconnected(ComponentName className) {
-	        Log.e(TAG, "onServiceDisconnected");
+	        LOG.e(TAG, "onServiceDisconnected");
 	    }
 	};	
 	
@@ -314,27 +314,27 @@ public class IBeaconManager {
                 default:
                     super.handleMessage(msg);
                     RangingData data = (RangingData) msg.obj;
-                    Log.d(TAG, "Got a ranging callback with data: "+data);
-                    Log.d(TAG, "Got a ranging callback with "+data.getIBeacons().size()+" iBeacons"); 
+                    LOG.d(TAG, "Got a ranging callback with data: " + data);
+                    LOG.d(TAG, "Got a ranging callback with " + data.getIBeacons().size() + " iBeacons");
                     if (data.getIBeacons() != null) {
                     	ArrayList<IBeacon> validatedIBeacons = new ArrayList<IBeacon>();
                     	Iterator<IBeaconData> iterator = data.getIBeacons().iterator();
                     	while (iterator.hasNext()) {
                     		IBeaconData iBeaconData = iterator.next();
                     		if (iBeaconData == null) {
-                    			Log.d(TAG, "null ibeacon found");
+                    			LOG.d(TAG, "null ibeacon found");
                     		}
                     		else {
                     			validatedIBeacons.add(iBeaconData );
                     		}
                     	}
                     	if (validatedIBeacons.size() > 0) {
-                            Log.d(TAG, "with beacon: "+validatedIBeacons.get(0).getMinor());                    		
+                            LOG.d(TAG, "with beacon: " + validatedIBeacons.get(0).getMinor());
                     	}
                         
                     	IBeaconManager manager = iBeaconManager.get();
                         if (manager.rangeNotifier != null) {                    	
-                        	Log.d(TAG, "Calling ranging notifier on :"+manager.rangeNotifier);
+                        	LOG.d(TAG, "Calling ranging notifier on :" + manager.rangeNotifier);
                         	manager.rangeNotifier.didRangeBeaconsInRegion(validatedIBeacons, data.getRegion());
                         }                    	
                     }

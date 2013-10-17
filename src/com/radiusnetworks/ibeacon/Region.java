@@ -23,7 +23,7 @@
  */
 package com.radiusnetworks.ibeacon;
 
-import android.util.Log;
+import com.radiusnetworks.utils.LOG;
 
 /**
  * This class represents a criteria of fields used to match iBeacons.  The strange name
@@ -111,15 +111,15 @@ public class Region  {
 	 */
 	public boolean matchesIBeacon(IBeacon iBeacon) {
 		if (proximityUuid != null && !iBeacon.getProximityUuid().equals(proximityUuid)) {
-			Log.d(TAG, "unmatching proxmityUuids: "+iBeacon.getProximityUuid()+" != "+proximityUuid);
+			LOG.d(TAG, "unmatching proxmityUuids: " + iBeacon.getProximityUuid() + " != " + proximityUuid);
 			return false;
 		}
 		if (major != null && iBeacon.getMajor() != major) {
-			Log.d(TAG, "unmatching major: "+iBeacon.getMajor()+" != "+major);
+			LOG.d(TAG, "unmatching major: " + iBeacon.getMajor() + " != " + major);
 			return false;
 		}
 		if (minor != null && iBeacon.getMinor() != minor) {
-			Log.d(TAG, "unmatching minor: "+iBeacon.getMajor()+" != "+minor);
+			LOG.d(TAG, "unmatching minor: " + iBeacon.getMajor() + " != " + minor);
 			return false;
 		}
 		return true;
