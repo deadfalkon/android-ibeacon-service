@@ -211,40 +211,8 @@ public class IBeacon {
 			return null;
 		}
 								
-		IBeacon iBeacon = new IBeacon();
-		
-		iBeacon.major = ((int)scanData[25] & 0xff) * 0x100 +scanData[26];
-		iBeacon.minor = ((int)scanData[27] & 0xff) * 0x100 +scanData[28];
-		iBeacon.txPower = (int)scanData[29]; // this one is signed
-		iBeacon.rssi = rssi;
-		
-		iBeacon.accuracy = calculateAccuracy(iBeacon.txPower, rssi);
-		iBeacon.proximity = calculateProximity(iBeacon.accuracy);
-		
-		// AirLocate:
-		// 02 01 1a 1a ff 4c 00 02 15  # Apple's fixed iBeacon advertising prefix
-		// e2 c5 6d b5 df fb 48 d2 b0 60 d0 f5 a7 10 96 e0 # iBeacon profile uuid
-		// 00 00 # major 
-		// 00 00 # minor 
-		// c5 # The 2's complement of the calibrated Tx Power
-		// Estimote:		
-		// 02 01 1a 11 07 2d 24 bf 16 
-		// 394b31ba3f486415ab376e5c0f09457374696d6f7465426561636f6e00000000000000000000000000000000000000000000000000
-		
-		byte[] proximityUuidBytes = new byte[16];
-		System.arraycopy(scanData, 9, proximityUuidBytes, 0, 16); 
-		String hexString = bytesToHex(proximityUuidBytes);
-		StringBuilder sb = new StringBuilder();
-		sb.append(hexString.substring(0,8));
-		sb.append("-");
-		sb.append(hexString.substring(8,12));
-		sb.append("-");
-		sb.append(hexString.substring(12,16));
-		sb.append("-");
-		sb.append(hexString.substring(16,20));
-		sb.append("-");
-		sb.append(hexString.substring(20,32));
-		iBeacon.proximityUuid = sb.toString();
+		IBeacon iBeacon = new IBeacon(scanData, rssi);
+
 		return iBeacon;
 	}
 
@@ -257,6 +225,41 @@ public class IBeacon {
 		this.proximityUuid = otherIBeacon.proximityUuid;
 		this.txPower = otherIBeacon.txPower;
 	}
+
+    private IBeacon(byte[] scanData, int rssi) {
+        this.major = ((int)scanData[25] & 0xff) * 0x100 +scanData[26];
+        this.minor = ((int)scanData[27] & 0xff) * 0x100 +scanData[28];
+        this.txPower = (int)scanData[29]; // this one is signed
+        this.rssi = rssi;
+
+        this.accuracy = calculateAccuracy(txPower, rssi);
+        this.proximity = calculateProximity(accuracy);
+
+        // AirLocate:
+        // 02 01 1a 1a ff 4c 00 02 15  # Apple's fixed iBeacon advertising prefix
+        // e2 c5 6d b5 df fb 48 d2 b0 60 d0 f5 a7 10 96 e0 # iBeacon profile uuid
+        // 00 00 # major
+        // 00 00 # minor
+        // c5 # The 2's complement of the calibrated Tx Power
+        // Estimote:
+        // 02 01 1a 11 07 2d 24 bf 16
+        // 394b31ba3f486415ab376e5c0f09457374696d6f7465426561636f6e00000000000000000000000000000000000000000000000000
+
+        byte[] proximityUuidBytes = new byte[16];
+        System.arraycopy(scanData, 9, proximityUuidBytes, 0, 16);
+        String hexString = bytesToHex(proximityUuidBytes);
+        StringBuilder sb = new StringBuilder();
+        sb.append(hexString.substring(0,8));
+        sb.append("-");
+        sb.append(hexString.substring(8,12));
+        sb.append("-");
+        sb.append(hexString.substring(12,16));
+        sb.append("-");
+        sb.append(hexString.substring(16,20));
+        sb.append("-");
+        sb.append(hexString.substring(20,32));
+        this.proximityUuid = sb.toString();
+    }
 	
 	protected IBeacon() {
 		
