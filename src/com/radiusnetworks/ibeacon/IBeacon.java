@@ -227,8 +227,8 @@ public class IBeacon {
 	}
 
     private IBeacon(byte[] scanData, int rssi) {
-        this.major = ((int)scanData[25] & 0xff) * 0x100 +scanData[26];
-        this.minor = ((int)scanData[27] & 0xff) * 0x100 +scanData[28];
+        this.major = (scanData[25] & 0xff) * 0x100 + (scanData[26] & 0xff);
+        this.minor = (scanData[27] & 0xff) * 0x100 + (scanData[28] & 0xff);
         this.txPower = (int)scanData[29]; // this one is signed
         this.rssi = rssi;
 
